@@ -14,16 +14,20 @@ class AuthController extends Controller
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:8',
         ]);
-       $user= User::create([
-            'name' => $request->name,
-            'email' => $request->email,
+
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
             'password' => $request->password
         ]);
+
+        $token = $user->createToken('token')->plainTextToken;
+
         return response()->json([
             'message' => 'Register has been successfully',
-            'user' => $user
+            'user'    => $user,
+            'token'   => $token
         ]);
-
     }
     public function login(Request $request)
 {
