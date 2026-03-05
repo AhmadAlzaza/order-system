@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Order;
 class OrderItemController extends Controller
 {
     /**
@@ -28,6 +29,9 @@ class OrderItemController extends Controller
             'price' => $product->price
             ]
         );
+        $order = Order::findOrFail($request->order_id);
+        $totalPrice = $order->total_price + ($request->quantity * $product->price);
+         $order->update(['total_price'=>$totalPrice]);
         return response()->json($orederItem);
     }
 
