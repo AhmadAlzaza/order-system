@@ -13,6 +13,7 @@ Total price is calculated automatically based on order items.
 
 ## Installation
 
+
 1. Clone the repository
    git clone https://github.com/AhmadAlzaza/order-system.git
 
@@ -32,6 +33,9 @@ Total price is calculated automatically based on order items.
 
 6. Start the server
    php artisan serve
+
+## Postman Collection
+Import `order-system-api.postman_collection.json` to Postman to test all API endpoints.
 
 ## API Endpoints
 
@@ -74,3 +78,4 @@ Authorization: Bearer {your_token}
 ## Notes
 - Product price is fetched automatically from the database
 - Order total price updates automatically when items are added
+- Orders can only be updated or deleted when status is **pending**
