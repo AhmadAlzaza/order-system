@@ -51,16 +51,23 @@ class OrderController extends Controller
     public function update(Request $request, string $id)
     {
         $order = Order::findOrFail($id);
-        $user = $request->user();
-        if ($order->user_id == $user->id)
-        {
-              $order->update(['status' => $request->status,'total_price' => $request->total_price]);
-            return response()->json($order);
+        if($order->status != 'pending'){
+            return response()->json(['message'=>'cant be able to change']);
         }
-        else
-        {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        else {
+
+            $user = $request->user();
+            if ($order->user_id == $user->id)
+            {
+                  $order->update(['status' => $request->status]);
+                return response()->json($order);
+            }
+            else
+            {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
         }
+
 
     }
 
@@ -70,7 +77,11 @@ class OrderController extends Controller
     public function destroy(Request $request,string $id)
     {
         $order = Order::findOrFail($id);
-        $user = $request->user();
+        if($order->status != 'pending'){
+            return response()->json(['message'=>'cant be able to change']);
+        }
+        else{
+            $user = $request->user();
         if ($order->user_id == $user->id)
         {
               $order->delete();
@@ -80,5 +91,7 @@ class OrderController extends Controller
         {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
+        }
+
     }
 }
