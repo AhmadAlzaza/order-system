@@ -23,7 +23,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $User = $request->user();
-        $order = Order::create(['user_id' => $User->id,'status' => $request->status,'total_price' => $request->total_price]);
+        $order = Order::create(['user_id' => $User->id,'status' => $request->status,'total_price' => 0]);
         return response()->json($order);
     }
 
