@@ -110,6 +110,27 @@ class OrderController extends Controller
 
 
     }
+    public function cancel(Request $request,string $id)
+    {
+        $order = Order::findOrFail($id);
+        if($order->status != 'pending'){
+            return response()->json(['message'=>'cant be able to change']);
+        }
+        else {
+
+            $user = $request->user();
+            if ($order->user_id == $user->id)
+            {
+                  $order->update(['status' => 'cancelled']);
+                return response()->json($order);
+            }
+            else
+            {
+                return response()->json(['message' => 'Unauthorized'], 403);
+            }
+        }
+
+    }
 
     /**
      * Remove the specified resource from storage.
