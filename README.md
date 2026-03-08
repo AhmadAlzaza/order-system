@@ -63,6 +63,7 @@ Import `order-system-api.postman_collection.json` to Postman to test all API end
 | GET | /api/orders/{id} | Get single order (requires token) |
 | PUT | /api/orders/{id} | Update order status (requires token) |
 | DELETE | /api/orders/{id} | Delete order (requires token) |
+| POST | /api/orders/{id}/cancel | Cancel order (requires token) |
 
 ### Order Items
 | Method | Endpoint | Description |
@@ -80,11 +81,11 @@ Authorization: Bearer {your_token}
 - Order total price updates automatically when items are added
 - Orders can only be updated or deleted when status is **pending**
 - Create order example:
-```json
+json
 {
     "items": [
         {"product_id": 1, "quantity": 2},
         {"product_id": 2, "quantity": 1}
     ]
 }
-```
+- Orders can only be cancelled when status is **pending**
