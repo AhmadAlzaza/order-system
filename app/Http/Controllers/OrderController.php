@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Controllers\OrderItemController;
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
 class OrderController extends Controller
 {
     /**
@@ -22,8 +25,36 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $User = $request->user();
-        $order = Order::create(['user_id' => $User->id,'status' => $request->status,'total_price' => 0]);
+
+        $request->validate([
+            'items'                => 'required|array',
+            'items.*.product_id'   => 'required|exists:products,id',
+            'items.*.quantity'     => 'required|integer|min:1',
+        ]);
+        $order = DB::transaction(function() use ($request) {
+            $order = Order::create([
+                'user_id'     => $request->user()->id,
+                'status'      => 'pending',
+                'total_price' => 0
+            ]);
+
+            foreach($request->items as $item) {
+                $product = Product::findOrFail($item['product_id']);
+
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $item['product_id'],
+                    'quantity'   => $item['quantity'],
+                    'price'      => $product->price
+                ]);
+
+                $order->total_price += $item['quantity'] * $product->price;
+            }
+
+            $order->save();
+            return $order;
+        });
+
         return response()->json($order);
     }
 
