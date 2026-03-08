@@ -11,7 +11,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::all();
+        $products = Product::paginate(15);
         return response()->json($products);
     }
 
@@ -39,7 +39,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $product = Product::findOrFail($id);   
+        $product = Product::findOrFail($id);
         $product->update($request->only(['name', 'description', 'price', 'stock']));
         return response()->json($product);
     }
