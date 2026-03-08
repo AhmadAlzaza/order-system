@@ -14,8 +14,8 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $User = $request->user();
-        $orders = $User->orders;
+        $user = $request->user();
+        $orders = $user->orders;
         return response()->json($orders);
 
     }

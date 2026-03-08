@@ -22,7 +22,7 @@ class OrderItemController extends Controller
     public function store(Request $request)
     {
         $product = Product::findOrFail($request->product_id);
-        $orederItem = OrderItem::create([
+        $orderItem = OrderItem::create([
             'order_id' => $request->order_id,
             'product_id' => $request->product_id,
             'quantity' => $request->quantity,
@@ -32,7 +32,7 @@ class OrderItemController extends Controller
         $order = Order::findOrFail($request->order_id);
         $totalPrice = $order->total_price + ($request->quantity * $product->price);
          $order->update(['total_price'=>$totalPrice]);
-        return response()->json($orederItem);
+        return response()->json($orderItem);
     }
 
     /**
