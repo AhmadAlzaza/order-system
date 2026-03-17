@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Http\Controllers\OrderItemController;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StoreOrderRequest;
 use App\Http\Requests\UpdateOrderRequest;
+use App\Http\Resources\OrderResource;
 
 class OrderController extends Controller
 {
@@ -18,9 +18,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-        $orders = $user->orders;
-        return response()->json($orders);
+        return OrderResource::collection(Order::with('user')->paginate(15));
     }
 
     /**
@@ -56,8 +54,7 @@ class OrderController extends Controller
             $order->save();
             return $order;
         });
-
-        return response()->json($order);
+        return new OrderResource($order->load('user'));
     }
 
     /**
@@ -68,7 +65,7 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
         $user = $request->user();
         if ($order->user_id == $user->id) {
-            return response()->json($order);
+            return new OrderResource($order->load('user'));
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
@@ -87,7 +84,7 @@ class OrderController extends Controller
             $user = $request->user();
             if ($order->user_id == $user->id) {
                 $order->update(['status' => $request->status]);
-                return response()->json($order);
+                return new OrderResource($order->load('user'));
             } else {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
@@ -103,7 +100,7 @@ class OrderController extends Controller
             $user = $request->user();
             if ($order->user_id == $user->id) {
                 $order->update(['status' => 'cancelled']);
-                return response()->json($order);
+                return new OrderResource($order->load('user'));
             } else {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }

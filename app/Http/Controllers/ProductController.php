@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Resources\ProductResource;
 
 class ProductController extends Controller
 {
@@ -14,8 +15,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::paginate(15);
-        return response()->json($products);
+
+        return ProductResource::collection(Product::paginate(15));
     }
 
     /**
@@ -24,7 +25,7 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $product = Product::create($request->only(['name', 'description', 'price', 'stock']));
-        return response()->json($product);
+        return new ProductResource($product);
     }
 
     /**
@@ -33,7 +34,7 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::findOrFail($id);
-        return response()->json($product);
+        return new ProductResource($product);
     }
 
     /**
@@ -43,7 +44,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->update($request->only(['name', 'description', 'price', 'stock']));
-        return response()->json($product);
+        return new ProductResource($product);
     }
 
     /**
