@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Order;
+use App\Http\Resources\OrderItemResource;
+
 class OrderItemController extends Controller
 {
     /**
@@ -13,7 +15,7 @@ class OrderItemController extends Controller
      */
     public function index()
     {
-        //
+        return OrderItemResource::collection(OrderItem::with('product')->paginate(15));
     }
 
     /**
@@ -22,17 +24,18 @@ class OrderItemController extends Controller
     public function store(Request $request)
     {
         $product = Product::findOrFail($request->product_id);
-        $orderItem = OrderItem::create([
-            'order_id' => $request->order_id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-            'price' => $product->price
+        $orderItem = OrderItem::create(
+            [
+                'order_id' => $request->order_id,
+                'product_id' => $request->product_id,
+                'quantity' => $request->quantity,
+                'price' => $product->price
             ]
         );
         $order = Order::findOrFail($request->order_id);
         $totalPrice = $order->total_price + ($request->quantity * $product->price);
-         $order->update(['total_price'=>$totalPrice]);
-        return response()->json($orderItem);
+        $order->update(['total_price' => $totalPrice]);
+        return new OrderItemResource($orderItem);
     }
 
     /**
@@ -40,7 +43,8 @@ class OrderItemController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $orderItem = OrderItem::findOrFail($id);
+        return new OrderItemResource($orderItem->load('product'));
     }
 
     /**
@@ -48,7 +52,23 @@ class OrderItemController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $product = Product::findOrFail($request->product_id);
+        $orderItem = OrderItem::findOrFail($id);
+        $oldQuantity = $orderItem->quantity;
+        $oldPrice    = $orderItem->price;
+        $orderItem->update(
+            [
+                'order_id' => $request->order_id,
+                'product_id' => $request->product_id,
+                'quantity' => $request->quantity,
+                'price' => $product->price
+            ]
+        );
+
+        $order = Order::findOrFail($request->order_id);
+        $totalPrice = $order->total_price - ($oldQuantity * $oldPrice) + ($request->quantity * $product->price);
+        $order->update(['total_price' => $totalPrice]);
+        return new OrderItemResource($orderItem->load('product'));
     }
 
     /**
@@ -56,6 +76,12 @@ class OrderItemController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $orderItem = OrderItem::findOrFail($id);
+        $order = Order::findOrFail($orderItem->order_id);
+        $total = $orderItem->quantity * $orderItem->price;
+        $orderItem->delete();
+        $order->total_price -= $total;
+        $order->save();
+        return response()->json(['message' => 'Order item deleted']);
     }
 }
