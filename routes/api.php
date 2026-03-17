@@ -18,10 +18,7 @@ Route::get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('orders', OrderController::class);
-    Route::apiResource('order-items',OrderItemController::class);
-    Route::post("/products",[ProductController::class,'store']);
-    Route::put("/products/{id}",[ProductController::class,'update']);
-    Route::delete("/products/{id}",[ProductController::class,'destroy']);
+    Route::apiResource('order-items', OrderItemController::class);
+    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
-
 });
