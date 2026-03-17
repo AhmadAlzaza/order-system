@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Requests\UpdateProductRequest;
+use App\Http\Requests\StoreProductRequest;
+
 class ProductController extends Controller
 {
     /**
@@ -18,11 +21,10 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         $product = Product::create($request->only(['name', 'description', 'price', 'stock']));
         return response()->json($product);
-
     }
 
     /**
@@ -37,7 +39,7 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateProductRequest $request, string $id)
     {
         $product = Product::findOrFail($id);
         $product->update($request->only(['name', 'description', 'price', 'stock']));
