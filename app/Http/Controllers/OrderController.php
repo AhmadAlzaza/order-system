@@ -18,7 +18,9 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        return OrderResource::collection(Order::with('user')->paginate(15));
+        return OrderResource::collection(
+            $request->user()->orders()->with('user')->paginate(15)
+        );
     }
 
     /**
@@ -47,7 +49,7 @@ class OrderController extends Controller
                     $product->stock -= $item['quantity'];
                     $product->save();
                 } else {
-                    throw new \Exception("Insufficient stock for product: " . $product->name);
+                    abort(422, 'Insufficient stock for product: ' . $product->name);
                 }
             }
 
@@ -78,7 +80,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         if ($order->status != 'pending') {
-            return response()->json(['message' => 'cant be able to change']);
+            return response()->json(['message' => 'Order cannot be modified in its current status']);
         } else {
 
             $user = $request->user();

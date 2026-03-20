@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -23,9 +24,12 @@ class User extends Authenticatable
     ];
     public function orders()
     {
-       return $this->hasMany(Order::class);
+        return $this->hasMany(Order::class);
     }
-
+    public function orderItems()
+    {
+        return $this->hasManyThrough(OrderItem::class, Order::class);
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

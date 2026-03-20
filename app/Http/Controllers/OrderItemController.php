@@ -7,21 +7,25 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Order;
 use App\Http\Resources\OrderItemResource;
+use App\Http\Requests\StoreOrderItemRequest;
+use App\Http\Requests\UpdateOrderItemRequest;
 
 class OrderItemController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return OrderItemResource::collection(OrderItem::with('product')->paginate(15));
+        return OrderItemResource::collection(
+            $request->user()->orderItems()->with('product')->paginate(15)
+        );
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreOrderItemRequest $request)
     {
         $product = Product::findOrFail($request->product_id);
         $orderItem = OrderItem::create(
@@ -50,7 +54,7 @@ class OrderItemController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateOrderItemRequest $request, string $id)
     {
         $product = Product::findOrFail($request->product_id);
         $orderItem = OrderItem::findOrFail($id);

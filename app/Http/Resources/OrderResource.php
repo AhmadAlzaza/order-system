@@ -16,7 +16,7 @@ class OrderResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user_name' => $this->user->name,
+            'user_name' => $this->whenLoaded('user', fn() => $this->user->name),
             'status' => $this->status,
             'total_price' => $this->total_price
         ];
