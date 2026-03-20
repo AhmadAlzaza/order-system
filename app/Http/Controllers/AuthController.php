@@ -25,7 +25,7 @@ class AuthController extends Controller
             'message' => 'Register has been successfully',
             'user'    => $user,
             'token'   => $token
-        ]);
+        ], 201);
     }
     public function login(LoginRequest $request)
     {
@@ -47,6 +47,6 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-        return response()->json('logout successfully');
+        return response()->json(['message' => 'logout successfully']);
     }
 }

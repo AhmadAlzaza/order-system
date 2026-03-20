@@ -54,6 +54,6 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $product->delete();
-        return response()->json('Product Deleted');
+        return response()->json(['message' => 'Product Deleted']);
     }
 }

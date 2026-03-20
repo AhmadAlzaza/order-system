@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Order extends Model
 {
-    protected $fillable = ['user_id','status','total_price'];
+    use HasFactory;
+    protected $fillable = ['user_id', 'status', 'total_price'];
     protected $casts = [
-    'total_price' => 'decimal:2',
+        'total_price' => 'decimal:2',
     ];
     public function orderItems()
     {

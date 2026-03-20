@@ -119,7 +119,7 @@ class OrderController extends Controller
             $user = $request->user();
             if ($order->user_id == $user->id) {
                 $order->delete();
-                return response()->json('order Deleted');
+                return response()->json(['message' => 'order Deleted']);
             } else {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
