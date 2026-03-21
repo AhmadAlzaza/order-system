@@ -36,7 +36,7 @@ class OrderController extends Controller
             ]);
 
             foreach ($request->items as $item) {
-                $product = Product::findOrFail($item['product_id']);
+                $product = Product::lockForUpdate()->findOrFail($item['product_id']);
                 if ($item['quantity'] <= $product->stock) {
                     OrderItem::create([
                         'order_id'   => $order->id,
