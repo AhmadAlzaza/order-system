@@ -24,7 +24,7 @@ class ProductTest extends TestCase
     }
     public function test_user_can_create_product(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'admin']);
         $response = $this->actingAs($user, 'sanctum')->postJson('/api/products', [
             'name' => Str::random(12),
             'description' => Str::random(50),
@@ -44,7 +44,7 @@ class ProductTest extends TestCase
     }
     public function test_user_can_update_product(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'admin']);
         $product = Product::factory()->create();
         $response = $this->actingAs($user, 'sanctum')->putJson('/api/products/' . $product->id, [
             'name' => Str::random(12),
@@ -57,7 +57,7 @@ class ProductTest extends TestCase
     }
     public function test_user_can_delete_product(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'admin']);
         $product = Product::factory()->create();
         $response = $this->actingAs($user, 'sanctum')->deleteJson('/api/products/' . $product->id);
         $response->assertJsonStructure(['message']);
