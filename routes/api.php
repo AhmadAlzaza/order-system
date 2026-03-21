@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
+use App\Providers\AppServiceProvider;
 
 Route::apiResource('products', ProductController::class)
     ->only(['index', 'show']);
@@ -19,6 +20,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('orders', OrderController::class);
     Route::apiResource('order-items', OrderItemController::class);
-    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+
+    Route::middleware('can:manager-products')->group(function () {
+        Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+    });
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
 });

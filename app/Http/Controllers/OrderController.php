@@ -96,7 +96,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         if ($order->status != 'pending') {
-            return response()->json(['message' => 'cant be able to change']);
+            return response()->json(['message' => 'Order cannot be modified in its current status']);
         } else {
 
             $user = $request->user();
@@ -116,7 +116,7 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
         if ($order->status != 'pending') {
-            return response()->json(['message' => 'cant be able to change']);
+            return response()->json(['message' => 'Order cannot be modified in its current status']);
         } else {
             $user = $request->user();
             if ($order->user_id == $user->id) {
