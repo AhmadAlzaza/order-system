@@ -37,6 +37,9 @@ class OrderItemController extends Controller
             ]
         );
         $order = Order::findOrFail($request->order_id);
+        if ($order->user_id != $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $totalPrice = $order->total_price + ($request->quantity * $product->price);
         $order->update(['total_price' => $totalPrice]);
         return new OrderItemResource($orderItem);
