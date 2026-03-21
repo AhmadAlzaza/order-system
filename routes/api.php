@@ -6,7 +6,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
-use App\Providers\AppServiceProvider;
 
 Route::apiResource('products', ProductController::class)
     ->only(['index', 'show']);

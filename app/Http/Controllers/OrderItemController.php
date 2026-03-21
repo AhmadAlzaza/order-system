@@ -28,6 +28,10 @@ class OrderItemController extends Controller
     public function store(StoreOrderItemRequest $request)
     {
         $product = Product::findOrFail($request->product_id);
+        $order = Order::findOrFail($request->order_id);
+        if ($order->user_id != $request->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
         $orderItem = OrderItem::create(
             [
                 'order_id' => $request->order_id,
@@ -36,10 +40,7 @@ class OrderItemController extends Controller
                 'price' => $product->price
             ]
         );
-        $order = Order::findOrFail($request->order_id);
-        if ($order->user_id != $request->user()->id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+
         $totalPrice = $order->total_price + ($request->quantity * $product->price);
         $order->update(['total_price' => $totalPrice]);
         return new OrderItemResource($orderItem);
