@@ -52,6 +52,7 @@ class OrderItemController extends Controller
     public function show(string $id)
     {
         $orderItem = OrderItem::findOrFail($id);
+
         return new OrderItemResource($orderItem->load('product'));
     }
 
@@ -62,6 +63,7 @@ class OrderItemController extends Controller
     {
         $product = Product::findOrFail($request->product_id);
         $orderItem = OrderItem::findOrFail($id);
+
         $oldQuantity = $orderItem->quantity;
         $oldPrice    = $orderItem->price;
         $orderItem->update(
